@@ -1,0 +1,125 @@
+*{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body{
+    display: flex;
+    justify-content: flex-start;
+}
+
+#container{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 60%;
+    min-width: 44em;
+}
+
+#board{
+    margin: 2em;
+    border: 2px solid #57402e;
+    border-collapse: collapse;
+}
+
+.gamebutton{
+    width: 12em;
+    height: 2em;
+    margin: 2em 2em;
+    border-radius: 10px;
+    background-color: #e0d5d5;
+    border: none;
+    color: #57402e;
+    font-family: monospace;
+    font-size: 1.25em;
+}
+
+.gamebutton:hover{
+    background-color: #a0826c;
+    border: 1px solid #57402e;
+    transition-duration: 0.3s;
+    color: #eadfdf;
+}
+
+.rank{
+    display: flex;
+    align-items: center;
+}
+
+h2{
+    margin: 0.3em 0.5em;
+    font-size: 2em;
+    font-family: monospace;
+    font-weight: normal;    
+}
+
+.pieceonboard{
+    height: 5em;
+    width: 5em;
+}
+
+.pieceonside{
+    margin-top: 0.5em;
+    height: 2em;
+    width: 2em;
+}
+
+.darksquare{
+    height: 5em;
+    width: 5em;
+    border: 2px solid #a0826c;
+    background-color: #a0826c;
+}
+
+
+.lightsquare{
+    height: 5em;
+    width: 5em;
+    border: 2px solid #e0d5d5;
+    background-color: #e0d5d5;
+}
+
+.selecteddarksquare{
+    height: 5em;
+    width: 5em;
+    border: 2px solid #57402e;
+    background-color: #a0826c;
+}
+
+.selectedlightsquare{
+    height: 5em;
+    width: 5em;
+    border: 2px solid #57402e;
+    background-color: #e0d5d5;
+}
+
+#taken-pieces-div{
+    width: 40%;
+    margin: 2em;
+    display: flex;
+    margin-bottom: 7.5em;
+}
+
+#taken-pieces-div h2{
+    width: 100%;
+    text-align: center;
+}
+
+#white-pieces{
+    display: flex;
+    justify-content: flex-start;
+    width: 50%;
+    flex-flow: wrap;
+    color: #57402e;
+}
+
+#black-pieces{
+    display: flex;
+    justify-content: flex-start;
+    width: 50%;
+    flex-flow: wrap;
+    padding: 0 0.8em;
+    border-left: 2px solid #57402e;
+    color: #57402e;
+}
