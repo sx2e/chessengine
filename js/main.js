@@ -4,9 +4,7 @@ var GameBoard = {};
 var SelectedSquare = null;
 var PreviousSquare = null;
 
-
-// quiet info: piece types = PieceType.indexOf(" ") 
-// quiet info: sq = Squares.indexOf(" ")
+// piece types = PieceType.indexOf(" ") 
 
 GameBoard.PieceNum = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 GameBoard.totpiecenum = 0;
@@ -59,8 +57,6 @@ function PosId() {
     return GameBoard.PositionId;
 }
 
-
-
 function SqStrtoId(str) {
     return Number((str[1]) * 8) + Number(files.indexOf(str[0]) - 8);
 }
@@ -79,6 +75,7 @@ function BoardGenerator() {
             sq.addEventListener("click", function(){
                 PreviousSquare = SelectedSquare;
                 SelectedSquare = $(this).attr("id");
+                $(this).addClass("selectedsquare");
                 registermove();
             })
 
@@ -101,6 +98,7 @@ function registermove() {
         PieceMover(PreviousSquare, SelectedSquare);
         PreviousSquare = null;
         SelectedSquare = null;
+        $(div).removeClass("selectedsquare");
     }
 }
 
@@ -142,6 +140,11 @@ function PieceGenerator() {
     return GameBoard.PieceNum;
 }
 
+function IsAttacked (sq) {
+    
+
+};
+
 function PieceMover(from, to) {
     var pce = GameBoard.PieceInSquare[SqStrtoId(from)];
     var to_pce = GameBoard.PieceInSquare[SqStrtoId(to)];
@@ -179,7 +182,7 @@ function PieceMover(from, to) {
         GameBoard.HalfMoves.pop();
         console.log("is illegal");
         return false;
-    }
+    };
 
     PieceGuiRemover(from);
 
@@ -207,29 +210,29 @@ function CheckFlags(pce, to_pce, from, to) {
     var flag = [false, false, false, false, false];
     if (to_pce != -1) {
         flag[0] = true;
-    }
+    };
 
     //   if () {}
     if ((pce == 0 && from[1] == "2" && to[1] == "4") || (pce == 6 && from[1] == "7" && to[1] == "5")) {
         flag[1] = true;
-    }
+    };
 
     if ((pce == 0 && from[1] == "7" && to[1] == "8") || (pce == 6 && from[1] == "2" && to[1] == "1")) {
         flag[2] = true;
-    }
+    };
 
     if (flag[0] == "0" && (pce == 0 && from[1] == "5" && to[1] == "6" && ((files.indexOf(from[0]) == files.indexOf(to[0]) + 1) || (files.indexOf(from[0]) == files.indexOf(to[0]) - 1)) || (pce == 6 && from[1] == "4" && to[1] == "3" && ((files.indexOf(from[0]) == files.indexOf(to[0]) + 1) || (files.indexOf(from[0]) == files.indexOf(to[0]) - 1))))) {
         flag[0] = true;
         flag[3] = true;
-    }
+    };
 
     if ((pce == 5 && from == "e1" && (to == "c1" || to == "g1")) || (pce == 11 && from == "e8" && (to == "c8" || to == "g8"))) {
         flag[4] = true;
-    }
+    };
 
     if (flag == [false, false, false, false, false]) {
         console.log("normal move");
-    }
+    };
 
     return flag;
 
@@ -255,6 +258,7 @@ function CheckLegality(pce, to_pce, from, to, flag) {
 function PossibleMoves(pce, square) {
     var possiblemoves = [];
     var sq = SqStrtoId(square);
+    //king
     if ((pce == 5) || (pce == 11)) {
         if (7 < sq) {
             possiblemoves.push(sq - 8);
@@ -281,7 +285,7 @@ function PossibleMoves(pce, square) {
             possiblemoves.push(sq + 9);
         }
     }
-
+    //knight
     if ((pce == 1) || (pce == 7)) {
         if ((48 > sq) && ((sq % 8) != 0)) {
             possiblemoves.push(sq + 15);
@@ -308,7 +312,7 @@ function PossibleMoves(pce, square) {
             possiblemoves.push(sq - 6);
         }
     }
-
+    //bishop
     if ((pce == 2) || (pce == 8)) {
         possiblemoves = possiblemoves.concat(
             LongRangeIterator(sq, 7),
@@ -317,7 +321,7 @@ function PossibleMoves(pce, square) {
             LongRangeIterator(sq, -9)
             );
     };
-
+    //rook
     if ((pce == 3) || (pce == 9)) {
         possiblemoves = possiblemoves.concat(
             LongRangeIterator(sq, 1),
@@ -325,8 +329,8 @@ function PossibleMoves(pce, square) {
             LongRangeIterator(sq, -1),
             LongRangeIterator(sq, -8)
         );
-    }
-
+    };
+    //queen
     if ((pce == 4) || (pce == 10)) {
         possiblemoves = possiblemoves.concat(
             LongRangeIterator(sq, 7),
@@ -338,7 +342,49 @@ function PossibleMoves(pce, square) {
             LongRangeIterator(sq, -1),
             LongRangeIterator(sq, -8)
         );
-    }
+    };
+    //white pawn
+    if (pce == 0) {
+        if (GameBoard.PieceInSquare[sq+8] == -1) {
+            possiblemoves.push(sq+8);
+        };
+        if (GameBoard.PieceInSquare[sq+7] > 5) {
+            possiblemoves.push(sq+7);
+        };
+        if (GameBoard.PieceInSquare[sq+9] > 5) {
+            possiblemoves.push(sq+9);
+        };
+        if (flag[1] == true && GameBoard.PieceInSquare[sq+16] == -1) {
+            possiblemoves.push(sq+16);
+        };
+        if (flag[3] == true && GameBoard.PieceInSquare[sq+1]==6 && GameBoard.PieceInSquare[sq+9]==-1 /*&& GameBoard.HalfMoves[GameBoard.HalfMoves.length - 1]==*/) {
+            possiblemoves.push(sq+9);
+        };
+        if (flag[3] == true && GameBoard.PieceInSquare[sq-1]==6 && GameBoard.PieceInSquare[sq+7]==-1 /*&& GameBoard.HalfMoves[GameBoard.HalfMoves.length - 1]==*/) {
+            possiblemoves.push(sq+7);
+        };
+    };
+    //black pawn
+    if (pce == 6) {
+        if (GameBoard.PieceInSquare[sq-8] == -1) {
+            possiblemoves.push(sq-8);
+        };
+        if (GameBoard.PieceInSquare[sq-7] != -1 && GameBoard.PieceInSquare[sq-7] < 6) {
+            possiblemoves.push(sq-7);
+        };
+        if (GameBoard.PieceInSquare[sq-9] != -1 && GameBoard.PieceInSquare[sq-9] < 6) {
+            possiblemoves.push(sq-9);
+        };
+        if (flag[1] == true && GameBoard.PieceInSquare[sq-16] == -1) {
+            possiblemoves.push(sq-16);
+        };
+        if (flag[3] == true && GameBoard.PieceInSquare[sq+1]==0 && GameBoard.PieceInSquare[sq-9]==-1 /*&& GameBoard.HalfMoves[GameBoard.HalfMoves.length - 1]==*/) {
+            possiblemoves.push(sq-9);
+        };
+        if (flag[3] == true && GameBoard.PieceInSquare[sq-1]==0 && GameBoard.PieceInSquare[sq-7]==-1 /*&& (GameBoard.HalfMoves[GameBoard.HalfMoves.length - 1].slice(2,))==*/) {
+            possiblemoves.push(sq-7);
+        };
+    };
     
     console.log(possiblemoves.map(x=>GameBoard.Square[x]));
     return possiblemoves;
@@ -348,20 +394,15 @@ function LongRangeIterator (sq, x) {
     var possiblemoves = [];
     for (i = 1; i < 8; i++) {
         var tsq = sq + x * i;
-        if ((tsq > 64) || (tsq < 0)) {
+        if ((tsq > 64) || (tsq < 0) || (((tsq%8)==0) && ((sq%8)==7)) || (((sq%8)==0) && ((tsq%8)==7)) {
             break;
         };
         if (GameBoard.PieceInSquare[tsq] == -1) {
             possiblemoves.push(tsq);
-            if (((tsq % 8) == 0) || ((tsq % 8) == 7)) {
-                break;
-            }
             continue;
         } else {
-            console.log("ex");
             console.log(GameBoard.Square[tsq]);
             if (((GameBoard.PieceInSquare[tsq] > 5) && (GameBoard.Turn == "w")) || ((GameBoard.PieceInSquare[tsq] < 6) && (GameBoard.Turn == "b"))) {
-                console.log("ex");
                 possiblemoves.push(tsq);
             };
             break;
